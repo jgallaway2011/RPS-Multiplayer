@@ -1,66 +1,65 @@
-var playerOneName = "Waiting for Player 1";
-var playerTwoName = "Waiting for Player 2";
-var wins = 0;
-var losses = 0;
+$(document).ready(function () {
 
-var config = {
-    apiKey: "AIzaSyCx-Bch_24M73NNlmrMeNn8OqeYBnQwRXM",
-    authDomain: "timetable-e2d39.firebaseapp.com",
-    databaseURL: "https://timetable-e2d39.firebaseio.com",
-    projectId: "timetable-e2d39",
-    storageBucket: "timetable-e2d39.appspot.com",
-    messagingSenderId: "364187128718"
+  var config = {
+    apiKey: "AIzaSyAbLouKWlWrns9du-aRJM8I66UHegjGvVg",
+    authDomain: "rps-multiplayer-99efa.firebaseapp.com",
+    databaseURL: "https://rps-multiplayer-99efa.firebaseio.com",
+    projectId: "rps-multiplayer-99efa",
+    storageBucket: "rps-multiplayer-99efa.appspot.com",
+    messagingSenderId: "1075870865234"
   };
 
-firebase.initializeApp(config);
+  firebase.initializeApp(config);
 
+  // Create a variable to reference the database.
+  var database = firebase.database();
 
-// Create a variable to reference the database.
-var database = firebase.database();
+  var playerOneName = "Waiting for Player 1";
+  var playerTwoName = "Waiting for Player 2";
+  var wins = 0;
+  var losses = 0;
 
+  database.ref("1").set({
+    playerOneName: playerOneName,
+    wins: wins,
+    losses: losses
+  });
 
-database.ref().on("value", function(snapshot) {
+  database.ref("2").set({
+    playerTwoName: playerTwoName,
+    wins: wins,
+    losses: losses
+  });
 
-  // If Firebase has a highPrice and highBidder stored, update our client-side variables
-  if (snapshot.child("playerOneName").exists() && snapshot.child("playerTwoName").exists()) {
-    // Set the variables for highBidder/highPrice equal to the stored values.
-    playerOneName = snapshot.val().playerOneName;
-    playerTwoName = snapshot.val().playerTwoName;
-  }
-
-  // If Firebase does not have highPrice and highBidder values stored, they remain the same as the
-  // values we set when we initialized the variables.
-  // In either case, we want to log the values to console and display them on the page.
-  console.log(playerOneName);
-  console.log(playerTwoName);
   $("#playerOneText").text(playerOneName);
   $("#playerTwoText").text(playerTwoName);
 
-  // If any errors are experienced, log them to console.
-}, function(errorObject) {
-  console.log("The read failed: " + errorObject.code);
-});
+  $("#submit-name").on("click", function () {
+    event.preventDefault();
 
-$("#submit-name").on("click", function(event) {
-  event.preventDefault();
+    database.ref().on("value", function (snapshot) {
 
-  if (snapshot.child("playerTwoName").exists()) {
-    var playerTwoName = $("#name-input").val().trim();
-    console.log(playerTwoName);
-    database.ref().set({
-      playerTwoName : playerTwoName,
-      wins : wins,
-      losses : losses
+
+      if (playerOneName = "Waiting for Player 1") {
+        var playerOneName = $("#name-input").val().trim();
+        database.ref("1").update({
+          playerOneName: playerOneName
+        });
+          $("#playerOneText").text(snapshot.playerOneName);
+      } else if (snapshot.playerTwoName = "Waiting for Player 2") {
+        var playerTwoName = $("#name-input").val().trim();
+        database.ref("/2").update({
+          playerTwoName: playerTwoName
+        });
+        $("#playerTwoText").text(snapshot.playerTwoName);
+      } else {
+        alert("Wait your turn please!")
+      }
+      // If any errors are experienced, log them to console.
+    }, function (errorObject) {
+      console.log("The read failed: " + errorObject.code);
     });
-  } else if (snapshot.child("playerOneName").exists() && snapshot.child("playerTwoName").exists()) {
-     alert("Wait your turn!")
-  } else {
-    var playerOneName = $("#name-input").val().trim();
-    console.log(playerOneName);
-    database.ref().set({
-      playerOneName : playerOneName,
-      wins : wins,
-      losses : losses
-    });
-  }
+
+  });
+
 });
